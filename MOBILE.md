@@ -18,9 +18,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Total Iterations | 11 |
-| Total Weight (kg) | 125 |
-| Total Time (min) | 135 |
+| Total Iterations | 12 |
+| Total Weight (kg) | 135 |
+| Total Time (min) | 150 |
 | Failed Attempts | 0 |
 
 ---
@@ -328,5 +328,34 @@ Custom animations or transitions.
 **Screenshot:** `[Fluid Animations Active]`
 
 **Commit:** `[NAIM: Fikir Atölyesi] Custom animations and interactive feedback - Total 125kg`
+
+---
+
+### 🏋️ Iteration 12 (Dark Mode Toggle)
+
+| Field | Value |
+|-------|-------|
+| Feature | Theme Switching System |
+| Weight | 10 kg |
+| Tool Used | Antigravity |
+| Time | 15 min |
+| Attempts | 1 |
+| Status | ✅ Success |
+
+**Prompt given to AI:**
+```
+Dark mode toggle implementation.
+```
+
+**What happened:**
+- Implemented a centralized theme management system in `IdeasContext`.
+- Added `isDarkMode` state and `toggleDarkMode` function with integrated `LayoutAnimation`.
+- Refactored `App.js` styles to support dynamic color palettes (Dark/Light).
+- Added a futuristic "Sun/Moon" theme toggle button in the Workshop header.
+- Verified all cards, inputs, and modals react instantly to theme changes.
+
+**Screenshot:** `[Dynamic Theme System Active]`
+
+**Commit:** `[NAIM: Fikir Atölyesi] Dark mode toggle and dynamic theme system - Total 135kg`
 
 ---

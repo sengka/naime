@@ -69,11 +69,19 @@ const AnimatedButton = ({ children, onPress, style, disabled }) => {
 };
 
 function WorkshopScreen({ navigation }) {
-  const { theme, screen } = features;
-  const { addIdea } = useIdeas();
+  const { theme: baseTheme, screen } = features;
+  const { addIdea, isDarkMode, toggleDarkMode } = useIdeas();
   const [idea, setIdea] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [time, setTime] = useState(new Date());
+
+  const theme = isDarkMode ? baseTheme : {
+    ...baseTheme,
+    background: '#F8FAFC',
+    text: '#0F172A',
+    secondary: '#64748B',
+    cardBackground: 'rgba(15, 23, 42, 0.05)',
+  };
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -114,15 +122,23 @@ function WorkshopScreen({ navigation }) {
   };
 
   const renderComponent = (component, index) => {
+    const cardBg = isDarkMode ? 'rgba(255, 255, 255, 0.04)' : 'rgba(15, 23, 42, 0.04)';
+    const inputBg = isDarkMode ? 'rgba(255, 255, 255, 0.03)' : 'rgba(15, 23, 42, 0.03)';
+
     switch (component.type) {
       case 'header':
         return (
           <View key={index} style={styles.headerContainer}>
-            <View style={styles.header}>
-              {renderIcon(component.icon, theme.primary, 36)}
-              <Text style={[styles.headerTitle, { color: theme.text }]}>
-                {component.title}
-              </Text>
+            <View style={styles.headerRow}>
+              <View style={styles.header}>
+                {renderIcon(component.icon, theme.primary, 36)}
+                <Text style={[styles.headerTitle, { color: theme.text }]}>
+                  {component.title}
+                </Text>
+              </View>
+              <TouchableOpacity onPress={toggleDarkMode} style={[styles.themeToggle, { backgroundColor: theme.primary + '15' }]}>
+                {renderIcon(isDarkMode ? 'Sun' : 'Moon', theme.primary, 20)}
+              </TouchableOpacity>
             </View>
             <View style={[styles.clockContainer, { backgroundColor: theme.primary + '10', borderColor: theme.primary + '30' }]}>
               {renderIcon('Clock', theme.primary, 14)}
@@ -132,7 +148,7 @@ function WorkshopScreen({ navigation }) {
         );
       case 'card':
         return (
-          <View key={index} style={[styles.card, { borderColor: theme.secondary + '30' }]}>
+          <View key={index} style={[styles.card, { backgroundColor: cardBg, borderColor: theme.secondary + '30' }]}>
             <Text style={[styles.cardTitle, { color: theme.primary }]}>
               {component.title}
             </Text>
@@ -153,7 +169,7 @@ function WorkshopScreen({ navigation }) {
       case 'text-input':
         return (
           <View key={index} style={styles.inputWrapper}>
-            <View style={[styles.inputContainer, { borderColor: theme.secondary + '40' }]}>
+            <View style={[styles.inputContainer, { backgroundColor: inputBg, borderColor: theme.secondary + '40' }]}>
               <TextInput
                 style={[styles.input, { color: theme.text }]}
                 placeholder={component.placeholder}
@@ -197,7 +213,7 @@ function WorkshopScreen({ navigation }) {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -213,13 +229,23 @@ function WorkshopScreen({ navigation }) {
 }
 
 function ArchiveScreen({ navigation }) {
-  const { theme } = features;
-  const { ideas, removeIdea, updateIdea, clearArchive } = useIdeas();
+  const { theme: baseTheme } = features;
+  const { ideas, removeIdea, updateIdea, clearArchive, isDarkMode } = useIdeas();
   const [modalVisible, setModalVisible] = useState(false);
   const [editingIdea, setEditingIdea] = useState(null);
   const [editTitle, setEditTitle] = useState('');
   const [editText, setEditText] = useState('');
   
+  const theme = isDarkMode ? baseTheme : {
+    ...baseTheme,
+    background: '#F8FAFC',
+    text: '#0F172A',
+    secondary: '#64748B',
+    cardBackground: 'rgba(15, 23, 42, 0.05)',
+  };
+
+  const cardBg = isDarkMode ? 'rgba(255, 255, 255, 0.04)' : 'rgba(15, 23, 42, 0.04)';
+
   const handleClear = () => {
     if (ideas.length === 0) return;
     Alert.alert('Arşivi Temizle', 'Tüm fikirlerini silmek istediğine emin misin?', [
@@ -253,9 +279,9 @@ function ArchiveScreen({ navigation }) {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
       <View style={styles.archiveHeader}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.backButton, { backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }]}>
           {renderIcon('ChevronLeft', theme.text, 28)}
         </TouchableOpacity>
         <Text style={[styles.archiveTitle, { color: theme.text }]}>Fikir Arşivi</Text>
@@ -267,7 +293,7 @@ function ArchiveScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.main}>
           {ideas.length === 0 ? (
-            <View style={[styles.card, { borderColor: theme.secondary + '30', borderStyle: 'dashed' }]}>
+            <View style={[styles.card, { backgroundColor: cardBg, borderColor: theme.secondary + '30', borderStyle: 'dashed' }]}>
               <View style={styles.emptyIconContainer}>
                 {renderIcon('Inbox', theme.secondary, 48)}
               </View>
@@ -277,7 +303,7 @@ function ArchiveScreen({ navigation }) {
             </View>
           ) : (
             ideas.map((item) => (
-              <View key={item.id} style={[styles.card, { padding: 0, overflow: 'hidden', borderColor: theme.secondary + '20' }]}>
+              <View key={item.id} style={[styles.card, { backgroundColor: cardBg, padding: 0, overflow: 'hidden', borderColor: theme.secondary + '20' }]}>
                 <Image source={{ uri: item.thumbnail }} style={styles.ideaImage} />
                 <View style={styles.ideaContent}>
                   <View style={styles.ideaHeader}>
@@ -320,7 +346,7 @@ function ArchiveScreen({ navigation }) {
             <View style={styles.modalBody}>
               <Text style={[styles.inputLabel, { color: theme.secondary }]}>BAŞLIK</Text>
               <TextInput
-                style={[styles.modalInput, { color: theme.text, borderColor: theme.secondary + '30' }]}
+                style={[styles.modalInput, { color: theme.text, borderColor: theme.secondary + '30', backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }]}
                 value={editTitle}
                 onChangeText={setEditTitle}
                 placeholder="Fikir Başlığı"
@@ -329,7 +355,7 @@ function ArchiveScreen({ navigation }) {
               
               <Text style={[styles.inputLabel, { color: theme.secondary, marginTop: 20 }]}>FİKİR DETAYI</Text>
               <TextInput
-                style={[styles.modalInput, { color: theme.text, borderColor: theme.secondary + '30', minHeight: 100 }]}
+                style={[styles.modalInput, { color: theme.text, borderColor: theme.secondary + '30', backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', minHeight: 100 }]}
                 value={editText}
                 onChangeText={setEditText}
                 multiline
@@ -352,23 +378,35 @@ function ArchiveScreen({ navigation }) {
 }
 
 export default function App() {
-  const { theme } = features;
-  
   return (
     <IdeasProvider>
-      <NavigationContainer>
-        <Stack.Navigator 
-          screenOptions={{ 
-            headerShown: false,
-            cardStyle: { backgroundColor: theme.background },
-            animationEnabled: true,
-          }}
-        >
-          <Stack.Screen name="Workshop" component={WorkshopScreen} />
-          <Stack.Screen name="Archive" component={ArchiveScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <AppNavigator />
     </IdeasProvider>
+  );
+}
+
+function AppNavigator() {
+  const { isDarkMode } = useIdeas();
+  const { theme: baseTheme } = features;
+  
+  const theme = isDarkMode ? baseTheme : {
+    ...baseTheme,
+    background: '#F8FAFC',
+  };
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator 
+        screenOptions={{ 
+          headerShown: false,
+          cardStyle: { backgroundColor: theme.background },
+          animationEnabled: true,
+        }}
+      >
+        <Stack.Screen name="Workshop" component={WorkshopScreen} />
+        <Stack.Screen name="Archive" component={ArchiveScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
@@ -389,10 +427,19 @@ const styles = StyleSheet.create({
     marginTop: 20,
     gap: 12,
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
+  },
+  themeToggle: {
+    padding: 10,
+    borderRadius: 14,
   },
   headerTitle: {
     fontSize: 32,
@@ -424,7 +471,6 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: 8,
-    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: 12,
   },
   clearButton: {
@@ -441,7 +487,6 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
     borderRadius: 32,
     padding: 24,
     borderWidth: 1,
@@ -551,7 +596,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   modalInput: {
-    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: 16,
     padding: 16,
     fontSize: 16,
@@ -598,7 +642,6 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   inputContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
     borderRadius: 24,
     padding: 20,
     borderWidth: 1,

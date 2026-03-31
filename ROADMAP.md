@@ -16,7 +16,7 @@
 - [x] Multi-screen navigation (tabs or stack)
 - [x] List/scroll view with items
 - [x] Image display (static or from URL)
-- [ ] Dark mode toggle
+- [x] Dark mode toggle
 - [x] Timestamp / clock feature
 - [x] Delete / edit functionality
 - [x] Custom animations or transitions

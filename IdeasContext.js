@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState } from 'react';
+import { LayoutAnimation } from 'react-native';
 
 const IdeasContext = createContext();
 
 export function IdeasProvider({ children }) {
   const [ideas, setIdeas] = useState([]);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   const addIdea = (text) => {
     const newIdea = {
@@ -30,8 +32,13 @@ export function IdeasProvider({ children }) {
     setIdeas([]);
   };
 
+  const toggleDarkMode = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsDarkMode((prev) => !prev);
+  };
+
   return (
-    <IdeasContext.Provider value={{ ideas, addIdea, removeIdea, updateIdea, clearArchive }}>
+    <IdeasContext.Provider value={{ ideas, addIdea, removeIdea, updateIdea, clearArchive, isDarkMode, toggleDarkMode }}>
       {children}
     </IdeasContext.Provider>
   );
