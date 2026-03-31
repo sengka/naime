@@ -5,7 +5,7 @@
 - [x] Single screen with app title and description
 - [x] Basic color scheme / theme
 - [x] Static text content display
-- [ ] Simple button with alert/action
+- [x] Simple button with alert/action
 - [ ] App icon / branding
 
 ---

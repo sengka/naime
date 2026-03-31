@@ -7,12 +7,27 @@ import {
   StatusBar,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import * as LucideIcons from 'lucide-react-native';
 import features from './features.json';
 
 export default function App() {
   const { theme, screen } = features;
+
+  const handleAction = (action) => {
+    switch (action) {
+      case 'log_idea':
+        Alert.alert(
+          'Yeni Bir Fikir!',
+          'Düşüncelerin bizim için değerli. Çok yakında fikirlerini doğrudan araçlara dönüştürebileceksin.',
+          [{ text: 'TAMAM', style: 'default' }]
+        );
+        break;
+      default:
+        console.log(`Bilinmeyen aksiyon: ${action}`);
+    }
+  };
 
   const renderIcon = (name, color, size = 24) => {
     // Lucide names in JSON might be Brain, Lightbulb
@@ -58,6 +73,7 @@ export default function App() {
             key={index}
             style={[styles.button, { backgroundColor: theme.primary }]}
             activeOpacity={0.8}
+            onPress={() => handleAction(component.action)}
           >
             {renderIcon(component.icon, '#ffffff', 20)}
             <Text style={styles.buttonLabel}>{component.label}</Text>

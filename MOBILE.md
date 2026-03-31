@@ -18,9 +18,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Total Iterations | 2 |
-| Total Weight (kg) | 20 |
-| Total Time (min) | 15 |
+| Total Iterations | 3 |
+| Total Weight (kg) | 30 |
+| Total Time (min) | 20 |
 | Failed Attempts | 0 |
 
 ---
@@ -79,5 +79,32 @@ Connect App.js to features.json to make the UI dynamic and implement the "Basic 
 **Screenshot:** `[Dynamic UI Active]`
 
 **Commit:** `[NAIM: Fikir Atölyesi] Dynamic UI and Premium Theme - 15kg`
+
+---
+
+### 🏋️ Iteration 3
+
+| Field | Value |
+|-------|-------|
+| Feature | Interactive Button Action |
+| Weight | 10 kg |
+| Tool Used | Antigravity |
+| Time | 5 min |
+| Attempts | 1 |
+| Status | ✅ Success |
+
+**Prompt given to AI:**
+```
+Simple button with alert/action (Warm-Up phase).
+```
+
+**What happened:**
+- Managed button actions using a dynamic `handleAction` dispatcher.
+- Implemented the `log_idea` action with a premium-styled native Alert.
+- Connected the UI interaction layer to the `features.json` action keys.
+
+**Screenshot:** `[Interactivity Active]`
+
+**Commit:** `[NAIM: Fikir Atölyesi] Interactive button action - 10kg`
 
 ---
