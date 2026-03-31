@@ -17,6 +17,6 @@
 - [x] List/scroll view with items
 - [x] Image display (static or from URL)
 - [ ] Dark mode toggle
-- [ ] Timestamp / clock feature
+- [x] Timestamp / clock feature
 - [ ] Delete / edit functionality
 - [ ] Custom animations or transitions

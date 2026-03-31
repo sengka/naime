@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -31,6 +31,16 @@ function WorkshopScreen({ navigation }) {
   const { addIdea } = useIdeas();
   const [idea, setIdea] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (date) => {
+    return date.toLocaleTimeString('tr-TR', { hour12: false });
+  };
 
   const handleAction = (action) => {
     switch (action) {
@@ -64,11 +74,17 @@ function WorkshopScreen({ navigation }) {
     switch (component.type) {
       case 'header':
         return (
-          <View key={index} style={styles.header}>
-            {renderIcon(component.icon, theme.primary, 36)}
-            <Text style={[styles.headerTitle, { color: theme.text }]}>
-              {component.title}
-            </Text>
+          <View key={index} style={styles.headerContainer}>
+            <View style={styles.header}>
+              {renderIcon(component.icon, theme.primary, 36)}
+              <Text style={[styles.headerTitle, { color: theme.text }]}>
+                {component.title}
+              </Text>
+            </View>
+            <View style={[styles.clockContainer, { backgroundColor: theme.primary + '10', borderColor: theme.primary + '30' }]}>
+              {renderIcon('Clock', theme.primary, 14)}
+              <Text style={[styles.clockText, { color: theme.primary }]}>{formatTime(time)}</Text>
+            </View>
           </View>
         );
       case 'card':
@@ -242,17 +258,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     gap: 24,
   },
+  headerContainer: {
+    marginBottom: 10,
+    marginTop: 20,
+    gap: 12,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
-    marginBottom: 10,
-    marginTop: 20,
   },
   headerTitle: {
     fontSize: 32,
     fontWeight: '900',
     letterSpacing: -1,
+  },
+  clockContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    borderWidth: 1,
+    gap: 8,
+  },
+  clockText: {
+    fontSize: 14,
+    fontWeight: '800',
+    fontFamily: Platform.OS === 'ios' ? 'Courier New' : 'monospace',
   },
   archiveHeader: {
     flexDirection: 'row',
