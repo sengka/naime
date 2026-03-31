@@ -6,7 +6,7 @@
 - [x] Basic color scheme / theme
 - [x] Static text content display
 - [x] Simple button with alert/action
-- [ ] App icon / branding
+- [x] App icon / branding
 
 ---
 
