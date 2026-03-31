@@ -12,10 +12,19 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import * as LucideIcons from 'lucide-react-native';
 import features from './features.json';
 
-export default function App() {
+const Stack = createStackNavigator();
+
+const renderIcon = (name, color, size = 24) => {
+  const IconComponent = LucideIcons[name] || LucideIcons.HelpCircle;
+  return <IconComponent color={color} size={size} />;
+};
+
+function WorkshopScreen({ navigation }) {
   const { theme, screen } = features;
   const [idea, setIdea] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -28,7 +37,6 @@ export default function App() {
           return;
         }
         setIsProcessing(true);
-        // Simüle edilmiş AI işlemi
         setTimeout(() => {
           Alert.alert(
             'Fikir Dönüştürüldü! 🚀',
@@ -41,16 +49,11 @@ export default function App() {
         }, 1500);
         break;
       case 'view_archive':
-        Alert.alert('Arşiv', 'Fikir arşivi şu an boş. Biraz fikir üretmeye ne dersin?');
+        navigation.navigate('Archive');
         break;
       default:
         console.log(`Bilinmeyen aksiyon: ${action}`);
     }
-  };
-
-  const renderIcon = (name, color, size = 24) => {
-    const IconComponent = LucideIcons[name] || LucideIcons.HelpCircle;
-    return <IconComponent color={color} size={size} />;
   };
 
   const renderComponent = (component, index) => {
@@ -144,13 +147,61 @@ export default function App() {
   );
 }
 
+function ArchiveScreen({ navigation }) {
+  const { theme } = features;
+  
+  return (
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar barStyle="light-content" />
+      <View style={styles.archiveHeader}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          {renderIcon('ChevronLeft', theme.text, 28)}
+        </TouchableOpacity>
+        <Text style={[styles.archiveTitle, { color: theme.text }]}>Fikir Arşivi</Text>
+      </View>
+      
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <View style={styles.main}>
+          <View style={[styles.card, { borderColor: theme.secondary + '30', borderStyle: 'dashed' }]}>
+            <View style={styles.emptyIconContainer}>
+              {renderIcon('Inbox', theme.secondary, 48)}
+            </View>
+            <Text style={[styles.cardContent, { color: theme.secondary, textAlign: 'center' }]}>
+              Henüz bir fikir arşivlenmemiş. Atölye'ye gidip bir şeyler üretmeye başla!
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+export default function App() {
+  const { theme } = features;
+  
+  return (
+    <NavigationContainer>
+      <Stack.Navigator 
+        screenOptions={{ 
+          headerShown: false,
+          cardStyle: { backgroundColor: theme.background },
+          animationEnabled: true,
+        }}
+      >
+        <Stack.Screen name="Workshop" component={WorkshopScreen} />
+        <Stack.Screen name="Archive" component={ArchiveScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
-    paddingVertical: 60,
+    paddingVertical: 30,
   },
   main: {
     paddingHorizontal: 24,
@@ -161,11 +212,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
     marginBottom: 10,
+    marginTop: 20,
   },
   headerTitle: {
     fontSize: 32,
     fontWeight: '900',
     letterSpacing: -1,
+  },
+  archiveHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    gap: 16,
+  },
+  backButton: {
+    padding: 8,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 12,
+  },
+  archiveTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+  },
+  emptyIconContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+    opacity: 0.5,
   },
   card: {
     backgroundColor: 'rgba(255, 255, 255, 0.04)',
@@ -214,6 +287,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     gap: 12,
     shadowColor: '#3b82f6',
+    borderWidth: 1,
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.4,
     shadowRadius: 16,

@@ -13,7 +13,7 @@
 ## 🟡 Working Set (10-15 kg each)
 
 - [x] Text input → output (user types, app responds)
-- [ ] Multi-screen navigation (tabs or stack)
+- [x] Multi-screen navigation (tabs or stack)
 - [ ] List/scroll view with items
 - [ ] Image display (static or from URL)
 - [ ] Dark mode toggle

@@ -18,9 +18,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Total Iterations | 5 |
-| Total Weight (kg) | 55 |
-| Total Time (min) | 45 |
+| Total Iterations | 6 |
+| Total Weight (kg) | 65 |
+| Total Time (min) | 60 |
 | Failed Attempts | 0 |
 
 ---
@@ -161,5 +161,33 @@ Text input -> output (Working Set phase).
 **Screenshot:** `[Input Layer Active]`
 
 **Commit:** `[NAIM: Fikir Atölyesi] Text input -> output implementation - Total 55kg`
+
+---
+
+### 🏋️ Iteration 6 (Navigation)
+
+| Field | Value |
+|-------|-------|
+| Feature | Multi-screen Navigation |
+| Weight | 10 kg |
+| Tool Used | Antigravity |
+| Time | 15 min |
+| Attempts | 1 |
+| Status | ✅ Success |
+
+**Prompt given to AI:**
+```
+Multi-screen navigation (tabs or stack).
+```
+
+**What happened:**
+- Installed and configured `react-navigation` (Native & Stack).
+- Refactored `App.js` into separate `WorkshopScreen` and `ArchiveScreen`.
+- Implemented a premium Stack Navigator with custom transitions and header styling.
+- Connected the "FİKİR ARŞİVİ" button to the new navigation system.
+
+**Screenshot:** `[Navigation Stack Active]`
+
+**Commit:** `[NAIM: Fikir Atölyesi] Multi-screen navigation implementation - Total 65kg`
 
 ---
