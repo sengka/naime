@@ -18,9 +18,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Total Iterations | 10 |
-| Total Weight (kg) | 115 |
-| Total Time (min) | 120 |
+| Total Iterations | 11 |
+| Total Weight (kg) | 125 |
+| Total Time (min) | 135 |
 | Failed Attempts | 0 |
 
 ---
@@ -300,5 +300,33 @@ Edit functionality & Title support.
 **Screenshot:** `[Edit Modal & Titles Active]`
 
 **Commit:** `[NAIM: Fikir Atölyesi] Edit functionality and title support - Total 115kg`
+
+---
+
+### 🏋️ Iteration 11 (Custom Animations)
+
+| Field | Value |
+|-------|-------|
+| Feature | Layout & Button Animations |
+| Weight | 10 kg |
+| Tool Used | Antigravity |
+| Time | 15 min |
+| Attempts | 1 |
+| Status | ✅ Success |
+
+**Prompt given to AI:**
+```
+Custom animations or transitions.
+```
+
+**What happened:**
+- Enabled `LayoutAnimation` for seamless list transitions (adding, deleting, and editing cards).
+- Created a custom `AnimatedButton` component to provide tactile scale feedback on press.
+- Implemented spring-based micro-animations for more premium feel.
+- Enhanced the "Transform" logic with spring layout transitions.
+
+**Screenshot:** `[Fluid Animations Active]`
+
+**Commit:** `[NAIM: Fikir Atölyesi] Custom animations and interactive feedback - Total 125kg`
 
 ---

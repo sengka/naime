@@ -19,4 +19,4 @@
 - [ ] Dark mode toggle
 - [x] Timestamp / clock feature
 - [x] Delete / edit functionality
-- [ ] Custom animations or transitions
+- [x] Custom animations or transitions

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,6 +13,9 @@ import {
   Platform,
   Image,
   Modal,
+  LayoutAnimation,
+  UIManager,
+  Animated,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -20,11 +23,49 @@ import * as LucideIcons from 'lucide-react-native';
 import features from './features.json';
 import { IdeasProvider, useIdeas } from './IdeasContext';
 
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 const Stack = createStackNavigator();
 
 const renderIcon = (name, color, size = 24) => {
   const IconComponent = LucideIcons[name] || LucideIcons.HelpCircle;
   return <IconComponent color={color} size={size} />;
+};
+
+const AnimatedButton = ({ children, onPress, style, disabled }) => {
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scale, {
+      toValue: 0.95,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scale, {
+      toValue: 1,
+      friction: 3,
+      tension: 40,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  return (
+    <Animated.View style={[{ transform: [{ scale }] }, style]}>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        onPress={onPress}
+        disabled={disabled}
+      >
+        {children}
+      </TouchableOpacity>
+    </Animated.View>
+  );
 };
 
 function WorkshopScreen({ navigation }) {
@@ -52,6 +93,7 @@ function WorkshopScreen({ navigation }) {
         }
         setIsProcessing(true);
         setTimeout(() => {
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
           addIdea(idea);
           Alert.alert(
             'Fikir Dönüştürüldü! 🚀',
@@ -121,30 +163,32 @@ function WorkshopScreen({ navigation }) {
                 multiline
               />
             </View>
-            <TouchableOpacity
+            <AnimatedButton
               style={[styles.inputButton, { backgroundColor: theme.primary }]}
               onPress={() => handleAction(component.action)}
-              activeOpacity={0.8}
               disabled={isProcessing}
             >
-              <Text style={styles.inputButtonLabel}>
-                {isProcessing ? 'İŞLENİYOR...' : component.buttonLabel}
-              </Text>
-              {renderIcon('Zap', '#ffffff', 18)}
-            </TouchableOpacity>
+              <View style={styles.inputButtonContent}>
+                <Text style={styles.inputButtonLabel}>
+                  {isProcessing ? 'İŞLENİYOR...' : component.buttonLabel}
+                </Text>
+                {renderIcon('Zap', '#ffffff', 18)}
+              </View>
+            </AnimatedButton>
           </View>
         );
       case 'button':
         return (
-          <TouchableOpacity
+          <AnimatedButton
             key={index}
             style={[styles.button, { backgroundColor: theme.primary + '15', borderColor: theme.primary + '40' }]}
-            activeOpacity={0.8}
             onPress={() => handleAction(component.action)}
           >
-            {renderIcon(component.icon, theme.primary, 20)}
-            <Text style={[styles.buttonLabel, { color: theme.primary }]}>{component.label}</Text>
-          </TouchableOpacity>
+            <View style={styles.buttonContent}>
+              {renderIcon(component.icon, theme.primary, 20)}
+              <Text style={[styles.buttonLabel, { color: theme.primary }]}>{component.label}</Text>
+            </View>
+          </AnimatedButton>
         );
       default:
         return null;
@@ -180,8 +224,16 @@ function ArchiveScreen({ navigation }) {
     if (ideas.length === 0) return;
     Alert.alert('Arşivi Temizle', 'Tüm fikirlerini silmek istediğine emin misin?', [
       { text: 'İPTAL', style: 'cancel' },
-      { text: 'SİL', onPress: clearArchive, style: 'destructive' }
+      { text: 'SİL', onPress: () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        clearArchive();
+      }, style: 'destructive' }
     ]);
+  };
+
+  const handleDelete = (id) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    removeIdea(id);
   };
 
   const openEdit = (item) => {
@@ -193,6 +245,7 @@ function ArchiveScreen({ navigation }) {
 
   const saveEdit = () => {
     if (editingIdea) {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       updateIdea(editingIdea.id, { title: editTitle, text: editText });
       setModalVisible(false);
     }
@@ -236,7 +289,7 @@ function ArchiveScreen({ navigation }) {
                       <TouchableOpacity onPress={() => openEdit(item)} style={styles.actionIcon}>
                         {renderIcon('Edit3', theme.secondary, 18)}
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => removeIdea(item.id)} style={styles.actionIcon}>
+                      <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.actionIcon}>
                         {renderIcon('X', theme.secondary, 18)}
                       </TouchableOpacity>
                     </View>
@@ -521,18 +574,20 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
   },
   button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 20,
     borderRadius: 24,
-    gap: 12,
     shadowColor: '#3b82f6',
     borderWidth: 1,
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.4,
     shadowRadius: 16,
     elevation: 12,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+    gap: 12,
   },
   buttonLabel: {
     fontSize: 18,
@@ -556,17 +611,19 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   inputButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 18,
     borderRadius: 20,
-    gap: 12,
     shadowColor: '#3b82f6',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
     elevation: 8,
+  },
+  inputButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 18,
+    gap: 12,
   },
   inputButtonLabel: {
     color: '#ffffff',
