@@ -16,6 +16,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as LucideIcons from 'lucide-react-native';
 import features from './features.json';
+import { IdeasProvider, useIdeas } from './IdeasContext';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +27,7 @@ const renderIcon = (name, color, size = 24) => {
 
 function WorkshopScreen({ navigation }) {
   const { theme, screen } = features;
+  const { addIdea } = useIdeas();
   const [idea, setIdea] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -38,6 +40,7 @@ function WorkshopScreen({ navigation }) {
         }
         setIsProcessing(true);
         setTimeout(() => {
+          addIdea(idea);
           Alert.alert(
             'Fikir Dönüştürüldü! 🚀',
             `"${idea}" fikrin bir prototip araca dönüştürüldü. Fikir defterine kaydedildi.`,
@@ -149,7 +152,16 @@ function WorkshopScreen({ navigation }) {
 
 function ArchiveScreen({ navigation }) {
   const { theme } = features;
+  const { ideas, removeIdea, clearArchive } = useIdeas();
   
+  const handleClear = () => {
+    if (ideas.length === 0) return;
+    Alert.alert('Arşivi Temizle', 'Tüm fikirlerini silmek istediğine emin misin?', [
+      { text: 'İPTAL', style: 'cancel' },
+      { text: 'SİL', onPress: clearArchive, style: 'destructive' }
+    ]);
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar barStyle="light-content" />
@@ -158,18 +170,35 @@ function ArchiveScreen({ navigation }) {
           {renderIcon('ChevronLeft', theme.text, 28)}
         </TouchableOpacity>
         <Text style={[styles.archiveTitle, { color: theme.text }]}>Fikir Arşivi</Text>
+        <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
+          {renderIcon('Trash2', theme.secondary, 20)}
+        </TouchableOpacity>
       </View>
       
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.main}>
-          <View style={[styles.card, { borderColor: theme.secondary + '30', borderStyle: 'dashed' }]}>
-            <View style={styles.emptyIconContainer}>
-              {renderIcon('Inbox', theme.secondary, 48)}
+          {ideas.length === 0 ? (
+            <View style={[styles.card, { borderColor: theme.secondary + '30', borderStyle: 'dashed' }]}>
+              <View style={styles.emptyIconContainer}>
+                {renderIcon('Inbox', theme.secondary, 48)}
+              </View>
+              <Text style={[styles.cardContent, { color: theme.secondary, textAlign: 'center' }]}>
+                Henüz bir fikir arşivlenmemiş. Atölye'ye gidip bir şeyler üretmeye başla!
+              </Text>
             </View>
-            <Text style={[styles.cardContent, { color: theme.secondary, textAlign: 'center' }]}>
-              Henüz bir fikir arşivlenmemiş. Atölye'ye gidip bir şeyler üretmeye başla!
-            </Text>
-          </View>
+          ) : (
+            ideas.map((item) => (
+              <View key={item.id} style={[styles.card, { borderColor: theme.secondary + '20' }]}>
+                <View style={styles.ideaHeader}>
+                  <Text style={[styles.ideaTime, { color: theme.secondary }]}>{item.timestamp}</Text>
+                  <TouchableOpacity onPress={() => removeIdea(item.id)}>
+                    {renderIcon('X', theme.secondary, 18)}
+                  </TouchableOpacity>
+                </View>
+                <Text style={[styles.ideaText, { color: theme.text }]}>{item.text}</Text>
+              </View>
+            ))
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -180,18 +209,20 @@ export default function App() {
   const { theme } = features;
   
   return (
-    <NavigationContainer>
-      <Stack.Navigator 
-        screenOptions={{ 
-          headerShown: false,
-          cardStyle: { backgroundColor: theme.background },
-          animationEnabled: true,
-        }}
-      >
-        <Stack.Screen name="Workshop" component={WorkshopScreen} />
-        <Stack.Screen name="Archive" component={ArchiveScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <IdeasProvider>
+      <NavigationContainer>
+        <Stack.Navigator 
+          screenOptions={{ 
+            headerShown: false,
+            cardStyle: { backgroundColor: theme.background },
+            animationEnabled: true,
+          }}
+        >
+          <Stack.Screen name="Workshop" component={WorkshopScreen} />
+          <Stack.Screen name="Archive" component={ArchiveScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </IdeasProvider>
   );
 }
 
@@ -205,7 +236,7 @@ const styles = StyleSheet.create({
   },
   main: {
     paddingHorizontal: 24,
-    gap: 28,
+    gap: 24,
   },
   header: {
     flexDirection: 'row',
@@ -225,15 +256,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     gap: 16,
+    justifyContent: 'space-between',
   },
   backButton: {
     padding: 8,
     backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: 12,
   },
+  clearButton: {
+    padding: 8,
+  },
   archiveTitle: {
     fontSize: 24,
     fontWeight: '800',
+    flex: 1,
   },
   emptyIconContainer: {
     alignItems: 'center',
@@ -243,13 +279,13 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: 'rgba(255, 255, 255, 0.04)',
     borderRadius: 32,
-    padding: 28,
+    padding: 24,
     borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.5,
     shadowRadius: 20,
-    elevation: 10,
+    elevation: 8,
   },
   cardTitle: {
     fontSize: 13,
@@ -260,8 +296,8 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   cardContent: {
-    fontSize: 20,
-    lineHeight: 30,
+    fontSize: 18,
+    lineHeight: 28,
     fontWeight: '600',
     marginBottom: 20,
   },
@@ -278,6 +314,21 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  ideaHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  ideaTime: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  ideaText: {
+    fontSize: 18,
+    lineHeight: 26,
+    fontWeight: '500',
   },
   button: {
     flexDirection: 'row',
