@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  Modal,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -169,7 +170,11 @@ function WorkshopScreen({ navigation }) {
 
 function ArchiveScreen({ navigation }) {
   const { theme } = features;
-  const { ideas, removeIdea, clearArchive } = useIdeas();
+  const { ideas, removeIdea, updateIdea, clearArchive } = useIdeas();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editingIdea, setEditingIdea] = useState(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editText, setEditText] = useState('');
   
   const handleClear = () => {
     if (ideas.length === 0) return;
@@ -177,6 +182,20 @@ function ArchiveScreen({ navigation }) {
       { text: 'İPTAL', style: 'cancel' },
       { text: 'SİL', onPress: clearArchive, style: 'destructive' }
     ]);
+  };
+
+  const openEdit = (item) => {
+    setEditingIdea(item);
+    setEditTitle(item.title || 'Fikir Başlığı');
+    setEditText(item.text);
+    setModalVisible(true);
+  };
+
+  const saveEdit = () => {
+    if (editingIdea) {
+      updateIdea(editingIdea.id, { title: editTitle, text: editText });
+      setModalVisible(false);
+    }
   };
 
   return (
@@ -209,10 +228,18 @@ function ArchiveScreen({ navigation }) {
                 <Image source={{ uri: item.thumbnail }} style={styles.ideaImage} />
                 <View style={styles.ideaContent}>
                   <View style={styles.ideaHeader}>
-                    <Text style={[styles.ideaTime, { color: theme.secondary }]}>{item.timestamp}</Text>
-                    <TouchableOpacity onPress={() => removeIdea(item.id)}>
-                      {renderIcon('X', theme.secondary, 18)}
-                    </TouchableOpacity>
+                    <View style={styles.ideaMeta}>
+                      <Text style={[styles.ideaTime, { color: theme.secondary }]}>{item.timestamp}</Text>
+                      <Text style={[styles.ideaTitleText, { color: theme.primary }]}>{item.title || 'Adsız Fikir'}</Text>
+                    </View>
+                    <View style={styles.ideaActions}>
+                      <TouchableOpacity onPress={() => openEdit(item)} style={styles.actionIcon}>
+                        {renderIcon('Edit3', theme.secondary, 18)}
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => removeIdea(item.id)} style={styles.actionIcon}>
+                        {renderIcon('X', theme.secondary, 18)}
+                      </TouchableOpacity>
+                    </View>
                   </View>
                   <Text style={[styles.ideaText, { color: theme.text }]}>{item.text}</Text>
                 </View>
@@ -221,6 +248,52 @@ function ArchiveScreen({ navigation }) {
           )}
         </View>
       </ScrollView>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: theme.background, borderColor: theme.primary + '30' }]}>
+            <View style={styles.modalHeader}>
+              <Text style={[styles.modalTitle, { color: theme.text }]}>Fikri Düzenle</Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                {renderIcon('X', theme.text, 24)}
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.modalBody}>
+              <Text style={[styles.inputLabel, { color: theme.secondary }]}>BAŞLIK</Text>
+              <TextInput
+                style={[styles.modalInput, { color: theme.text, borderColor: theme.secondary + '30' }]}
+                value={editTitle}
+                onChangeText={setEditTitle}
+                placeholder="Fikir Başlığı"
+                placeholderTextColor={theme.secondary}
+              />
+              
+              <Text style={[styles.inputLabel, { color: theme.secondary, marginTop: 20 }]}>FİKİR DETAYI</Text>
+              <TextInput
+                style={[styles.modalInput, { color: theme.text, borderColor: theme.secondary + '30', minHeight: 100 }]}
+                value={editText}
+                onChangeText={setEditText}
+                multiline
+                placeholder="Fikrini detaylandır..."
+                placeholderTextColor={theme.secondary}
+              />
+            </View>
+
+            <TouchableOpacity
+              style={[styles.saveButton, { backgroundColor: theme.primary }]}
+              onPress={saveEdit}
+            >
+              <Text style={styles.saveButtonText}>KAYDET</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -364,17 +437,88 @@ const styles = StyleSheet.create({
   ideaHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 12,
   },
+  ideaMeta: {
+    flex: 1,
+  },
+  ideaActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  actionIcon: {
+    padding: 4,
+  },
   ideaTime: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: '700',
+    marginBottom: 2,
+  },
+  ideaTitleText: {
+    fontSize: 16,
+    fontWeight: '900',
+    letterSpacing: 0.5,
   },
   ideaText: {
-    fontSize: 18,
-    lineHeight: 26,
+    fontSize: 16,
+    lineHeight: 24,
     fontWeight: '500',
+    marginTop: 4,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    padding: 30,
+    paddingBottom: 50,
+    borderWidth: 1,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+  },
+  modalBody: {
+    marginBottom: 30,
+  },
+  inputLabel: {
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 1,
+    marginBottom: 8,
+  },
+  modalInput: {
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 16,
+    padding: 16,
+    fontSize: 16,
+    borderWidth: 1,
+  },
+  saveButton: {
+    borderRadius: 20,
+    paddingVertical: 18,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+    elevation: 10,
+  },
+  saveButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '900',
+    letterSpacing: 2,
   },
   button: {
     flexDirection: 'row',

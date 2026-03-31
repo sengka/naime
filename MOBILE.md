@@ -18,9 +18,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Total Iterations | 9 |
-| Total Weight (kg) | 100 |
-| Total Time (min) | 105 |
+| Total Iterations | 10 |
+| Total Weight (kg) | 115 |
+| Total Time (min) | 120 |
 | Failed Attempts | 0 |
 
 ---
@@ -272,5 +272,33 @@ Timestamp / clock feature.
 **Screenshot:** `[100kg Milestone - Time Active]`
 
 **Commit:** `[NAIM: Fikir Atölyesi] Timestamp / clock implementation - Total 100kg MILESTONE 🎯`
+
+---
+
+### 🏋️ Iteration 10 (Edit Functionality)
+
+| Field | Value |
+|-------|-------|
+| Feature | Edit & Title Support |
+| Weight | 15 kg |
+| Tool Used | Antigravity |
+| Time | 15 min |
+| Attempts | 1 |
+| Status | ✅ Success |
+
+**Prompt given to AI:**
+```
+Edit functionality & Title support.
+```
+
+**What happened:**
+- Updated `IdeasContext` to support `updateIdea` and a `title` field for each idea.
+- Implemented a premium `Modal` in `App.js` for editing title and text.
+- Added a new `Edit` action icon to the Archive cards.
+- Redesigned Archive card header to display the idea's title and timestamp simultaneously.
+
+**Screenshot:** `[Edit Modal & Titles Active]`
+
+**Commit:** `[NAIM: Fikir Atölyesi] Edit functionality and title support - Total 115kg`
 
 ---

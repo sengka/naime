@@ -18,5 +18,5 @@
 - [x] Image display (static or from URL)
 - [ ] Dark mode toggle
 - [x] Timestamp / clock feature
-- [ ] Delete / edit functionality
+- [x] Delete / edit functionality
 - [ ] Custom animations or transitions

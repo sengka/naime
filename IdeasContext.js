@@ -9,6 +9,7 @@ export function IdeasProvider({ children }) {
     const newIdea = {
       id: Date.now().toString(),
       text,
+      title: 'Yeni Fikir',
       thumbnail: `https://picsum.photos/seed/${Math.random()}/400/200`,
       timestamp: new Date().toLocaleString('tr-TR'),
     };
@@ -16,7 +17,13 @@ export function IdeasProvider({ children }) {
   };
 
   const removeIdea = (id) => {
-    setIdeas((prev) => prev.filter((item) => item.id !== id));
+    setIdeas((prev) => prev.filter((idea) => idea.id !== id));
+  };
+
+  const updateIdea = (id, newData) => {
+    setIdeas((prev) =>
+      prev.map((idea) => (idea.id === id ? { ...idea, ...newData } : idea))
+    );
   };
 
   const clearArchive = () => {
@@ -24,7 +31,7 @@ export function IdeasProvider({ children }) {
   };
 
   return (
-    <IdeasContext.Provider value={{ ideas, addIdea, removeIdea, clearArchive }}>
+    <IdeasContext.Provider value={{ ideas, addIdea, removeIdea, updateIdea, clearArchive }}>
       {children}
     </IdeasContext.Provider>
   );
