@@ -11,6 +11,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -43,7 +44,7 @@ function WorkshopScreen({ navigation }) {
           addIdea(idea);
           Alert.alert(
             'Fikir Dönüştürüldü! 🚀',
-            `"${idea}" fikrin bir prototip araca dönüştürüldü. Fikir defterine kaydedildi.`,
+            `"${idea}" fikrin bir prototip araca dönüştürüldü. Fikir defterine görseliyle kaydedildi.`,
             [{ text: 'HARİKA', onPress: () => {
               setIdea('');
               setIsProcessing(false);
@@ -188,14 +189,17 @@ function ArchiveScreen({ navigation }) {
             </View>
           ) : (
             ideas.map((item) => (
-              <View key={item.id} style={[styles.card, { borderColor: theme.secondary + '20' }]}>
-                <View style={styles.ideaHeader}>
-                  <Text style={[styles.ideaTime, { color: theme.secondary }]}>{item.timestamp}</Text>
-                  <TouchableOpacity onPress={() => removeIdea(item.id)}>
-                    {renderIcon('X', theme.secondary, 18)}
-                  </TouchableOpacity>
+              <View key={item.id} style={[styles.card, { padding: 0, overflow: 'hidden', borderColor: theme.secondary + '20' }]}>
+                <Image source={{ uri: item.thumbnail }} style={styles.ideaImage} />
+                <View style={styles.ideaContent}>
+                  <View style={styles.ideaHeader}>
+                    <Text style={[styles.ideaTime, { color: theme.secondary }]}>{item.timestamp}</Text>
+                    <TouchableOpacity onPress={() => removeIdea(item.id)}>
+                      {renderIcon('X', theme.secondary, 18)}
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={[styles.ideaText, { color: theme.text }]}>{item.text}</Text>
                 </View>
-                <Text style={[styles.ideaText, { color: theme.text }]}>{item.text}</Text>
               </View>
             ))
           )}
@@ -314,6 +318,14 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  ideaImage: {
+    width: '100%',
+    height: 160,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+  },
+  ideaContent: {
+    padding: 24,
   },
   ideaHeader: {
     flexDirection: 'row',

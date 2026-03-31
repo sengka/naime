@@ -18,9 +18,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Total Iterations | 7 |
-| Total Weight (kg) | 80 |
-| Total Time (min) | 75 |
+| Total Iterations | 8 |
+| Total Weight (kg) | 90 |
+| Total Time (min) | 90 |
 | Failed Attempts | 0 |
 
 ---
@@ -217,5 +217,32 @@ List/scroll view with items.
 **Screenshot:** `[Dynamic Archive List Active]`
 
 **Commit:** `[NAIM: Fikir Atölyesi] Shared state and archive list implementation - Total 80kg`
+
+---
+### 🏋️ Iteration 8 (Visuals)
+
+| Field | Value |
+|-------|-------|
+| Feature | Image Display |
+| Weight | 10 kg |
+| Tool Used | Antigravity |
+| Time | 15 min |
+| Attempts | 1 |
+| Status | ✅ Success |
+
+**Prompt given to AI:**
+```
+Image display (static or from URL).
+```
+
+**What happened:**
+- Updated `IdeasContext` to include a dynamic `thumbnail` URL for each new idea.
+- Integrated the `Image` component into the `ArchiveScreen`.
+- Styled the Archive cards to feature a top-aligned, premium-look visual for each idea.
+- Implemented a "simulation" of AI image generation during the workshop transformation.
+
+**Screenshot:** `[Visual Archive Active]`
+
+**Commit:** `[NAIM: Fikir Atölyesi] Visual representation (image display) implementation - Total 90kg`
 
 ---

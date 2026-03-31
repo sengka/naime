@@ -9,6 +9,7 @@ export function IdeasProvider({ children }) {
     const newIdea = {
       id: Date.now().toString(),
       text,
+      thumbnail: `https://picsum.photos/seed/${Math.random()}/400/200`,
       timestamp: new Date().toLocaleString('tr-TR'),
     };
     setIdeas((prev) => [newIdea, ...prev]);

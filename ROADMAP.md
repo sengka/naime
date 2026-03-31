@@ -15,7 +15,7 @@
 - [x] Text input → output (user types, app responds)
 - [x] Multi-screen navigation (tabs or stack)
 - [x] List/scroll view with items
-- [ ] Image display (static or from URL)
+- [x] Image display (static or from URL)
 - [ ] Dark mode toggle
 - [ ] Timestamp / clock feature
 - [ ] Delete / edit functionality
