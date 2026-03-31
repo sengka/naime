@@ -1,0 +1,31 @@
+{
+  "theme": {
+    "background": "#09090b",
+    "primary": "#3b82f6",
+    "text": "#fafafa",
+    "secondary": "#71717a"
+  },
+  "screen": {
+    "title": "Fikir Atölyesi",
+    "description": "Düşüncelerini buraya dök, biz onları araçlara dönüştürelim.",
+    "components": [
+      {
+        "type": "header",
+        "icon": "Brain",
+        "title": "Fikir Atölyesi"
+      },
+      {
+        "type": "card",
+        "title": "Ağırlık: Warm-Up (20kg)",
+        "content": "Bu ekran tamamen backendden gelen bir JSON dosyası tarafından yönetiliyor. İlk lift başarıyla tamamlandı!",
+        "footer": "NAIM Protocol ACTIVE"
+      },
+      {
+        "type": "button",
+        "label": "FİKİR BIRAK",
+        "action": "log_idea",
+        "icon": "Lightbulb"
+      }
+    ]
+  }
+}
