@@ -228,6 +228,16 @@ function WorkshopScreen({ navigation }) {
   );
 }
 
+function LoadingScreen() {
+  const { theme } = features;
+  return (
+    <View style={[styles.loadingContainer, { backgroundColor: theme.background }]}>
+      {renderIcon('Zap', theme.primary, 48)}
+      <Text style={[styles.loadingText, { color: theme.text }]}>ATÖLYE HAZIRLANIYOR...</Text>
+    </View>
+  );
+}
+
 function ArchiveScreen({ navigation }) {
   const { theme: baseTheme } = features;
   const { ideas, removeIdea, updateIdea, clearArchive, isDarkMode } = useIdeas();
@@ -235,6 +245,7 @@ function ArchiveScreen({ navigation }) {
   const [editingIdea, setEditingIdea] = useState(null);
   const [editTitle, setEditTitle] = useState('');
   const [editText, setEditText] = useState('');
+  const [editActionItems, setEditActionItems] = useState(['', '', '']);
   
   const theme = isDarkMode ? baseTheme : {
     ...baseTheme,
@@ -266,15 +277,26 @@ function ArchiveScreen({ navigation }) {
     setEditingIdea(item);
     setEditTitle(item.title || 'Fikir Başlığı');
     setEditText(item.text);
+    setEditActionItems(item.actionItems || ['', '', '']);
     setModalVisible(true);
   };
 
   const saveEdit = () => {
     if (editingIdea) {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      updateIdea(editingIdea.id, { title: editTitle, text: editText });
+      updateIdea(editingIdea.id, { 
+        title: editTitle, 
+        text: editText,
+        actionItems: editActionItems 
+      });
       setModalVisible(false);
     }
+  };
+
+  const updateActionItem = (index, value) => {
+    const updated = [...editActionItems];
+    updated[index] = value;
+    setEditActionItems(updated);
   };
 
   return (
@@ -321,6 +343,21 @@ function ArchiveScreen({ navigation }) {
                     </View>
                   </View>
                   <Text style={[styles.ideaText, { color: theme.text }]}>{item.text}</Text>
+                  
+                  {item.actionItems && (
+                    <View style={[styles.aiSection, { backgroundColor: theme.primary + '08', borderColor: theme.primary + '20' }]}>
+                      <View style={styles.aiHeader}>
+                        {renderIcon('BrainCircuit', theme.primary, 14)}
+                        <Text style={[styles.aiTitle, { color: theme.primary }]}>AI YOL HARİTASI</Text>
+                      </View>
+                      {item.actionItems.map((step, idx) => (
+                        <View key={idx} style={styles.aiStep}>
+                          <View style={[styles.aiDot, { backgroundColor: theme.primary }]} />
+                          <Text style={[styles.aiStepText, { color: theme.text }]}>{step}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
                 </View>
               </View>
             ))
@@ -335,42 +372,56 @@ function ArchiveScreen({ navigation }) {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: theme.background, borderColor: theme.primary + '30' }]}>
-            <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: theme.text }]}>Fikri Düzenle</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                {renderIcon('X', theme.text, 24)}
+          <ScrollView contentContainerStyle={{ justifyContent: 'flex-end', flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+            <View style={[styles.modalContent, { backgroundColor: theme.background, borderColor: theme.primary + '30' }]}>
+              <View style={styles.modalHeader}>
+                <Text style={[styles.modalTitle, { color: theme.text }]}>Fikri Düzenle</Text>
+                <TouchableOpacity onPress={() => setModalVisible(false)}>
+                  {renderIcon('X', theme.text, 24)}
+                </TouchableOpacity>
+              </View>
+              
+              <View style={styles.modalBody}>
+                <Text style={[styles.inputLabel, { color: theme.secondary }]}>BAŞLIK</Text>
+                <TextInput
+                  style={[styles.modalInput, { color: theme.text, borderColor: theme.secondary + '30', backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }]}
+                  value={editTitle}
+                  onChangeText={setEditTitle}
+                  placeholder="Fikir Başlığı"
+                  placeholderTextColor={theme.secondary}
+                />
+                
+                <Text style={[styles.inputLabel, { color: theme.secondary, marginTop: 20 }]}>FİKİR DETAYI</Text>
+                <TextInput
+                  style={[styles.modalInput, { color: theme.text, borderColor: theme.secondary + '30', backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', minHeight: 80 }]}
+                  value={editText}
+                  onChangeText={setEditText}
+                  multiline
+                  placeholder="Fikrini detaylandır..."
+                  placeholderTextColor={theme.secondary}
+                />
+
+                <Text style={[styles.inputLabel, { color: theme.primary, marginTop: 20 }]}>AI YOL HARİTASI (ADIMLAR)</Text>
+                {editActionItems.map((step, idx) => (
+                  <TextInput
+                    key={idx}
+                    style={[styles.modalInput, { color: theme.text, borderColor: theme.primary + '20', backgroundColor: theme.primary + '05', marginTop: 8, paddingVertical: 12 }]}
+                    value={step}
+                    onChangeText={(val) => updateActionItem(idx, val)}
+                    placeholder={`Adım ${idx + 1}`}
+                    placeholderTextColor={theme.secondary}
+                  />
+                ))}
+              </View>
+
+              <TouchableOpacity
+                style={[styles.saveButton, { backgroundColor: theme.primary }]}
+                onPress={saveEdit}
+              >
+                <Text style={styles.saveButtonText}>KAYDET</Text>
               </TouchableOpacity>
             </View>
-            
-            <View style={styles.modalBody}>
-              <Text style={[styles.inputLabel, { color: theme.secondary }]}>BAŞLIK</Text>
-              <TextInput
-                style={[styles.modalInput, { color: theme.text, borderColor: theme.secondary + '30', backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }]}
-                value={editTitle}
-                onChangeText={setEditTitle}
-                placeholder="Fikir Başlığı"
-                placeholderTextColor={theme.secondary}
-              />
-              
-              <Text style={[styles.inputLabel, { color: theme.secondary, marginTop: 20 }]}>FİKİR DETAYI</Text>
-              <TextInput
-                style={[styles.modalInput, { color: theme.text, borderColor: theme.secondary + '30', backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', minHeight: 100 }]}
-                value={editText}
-                onChangeText={setEditText}
-                multiline
-                placeholder="Fikrini detaylandır..."
-                placeholderTextColor={theme.secondary}
-              />
-            </View>
-
-            <TouchableOpacity
-              style={[styles.saveButton, { backgroundColor: theme.primary }]}
-              onPress={saveEdit}
-            >
-              <Text style={styles.saveButtonText}>KAYDET</Text>
-            </TouchableOpacity>
-          </View>
+          </ScrollView>
         </View>
       </Modal>
     </SafeAreaView>
@@ -386,13 +437,15 @@ export default function App() {
 }
 
 function AppNavigator() {
-  const { isDarkMode } = useIdeas();
+  const { isDarkMode, isLoaded } = useIdeas();
   const { theme: baseTheme } = features;
   
   const theme = isDarkMode ? baseTheme : {
     ...baseTheme,
     background: '#F8FAFC',
   };
+
+  if (!isLoaded) return <LoadingScreen />;
 
   return (
     <NavigationContainer>
@@ -563,11 +616,58 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontWeight: '500',
     marginTop: 4,
+    marginBottom: 16,
+  },
+  aiSection: {
+    marginTop: 8,
+    padding: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    gap: 12,
+  },
+  aiHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  aiTitle: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+  },
+  aiStep: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  aiDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    opacity: 0.6,
+  },
+  aiStepText: {
+    fontSize: 14,
+    fontWeight: '600',
+    flex: 1,
   },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.8)',
     justifyContent: 'flex-end',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 20,
+  },
+  loadingText: {
+    fontSize: 14,
+    fontWeight: '900',
+    letterSpacing: 2,
+    opacity: 0.7,
   },
   modalContent: {
     borderTopLeftRadius: 40,

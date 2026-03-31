@@ -20,3 +20,11 @@
 - [x] Timestamp / clock feature
 - [x] Delete / edit functionality
 - [x] Custom animations or transitions
+
+---
+
+## 🔴 Boss Level (20-30 kg each)
+
+- [x] Data Persistence (AsyncStorage) (20kg)
+- [x] AI-Powered "Next Steps" Generation (15kg)
+- [ ] Advanced Micro-Interactions (Lottie/Confetti) (10kg)
