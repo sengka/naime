@@ -12,7 +12,7 @@
 
 ## 🟡 Working Set (10-15 kg each)
 
-- [ ] Text input → output (user types, app responds)
+- [x] Text input → output (user types, app responds)
 - [ ] Multi-screen navigation (tabs or stack)
 - [ ] List/scroll view with items
 - [ ] Image display (static or from URL)

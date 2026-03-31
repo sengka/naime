@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,21 +8,40 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import * as LucideIcons from 'lucide-react-native';
 import features from './features.json';
 
 export default function App() {
   const { theme, screen } = features;
+  const [idea, setIdea] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleAction = (action) => {
     switch (action) {
-      case 'log_idea':
-        Alert.alert(
-          'Yeni Bir Fikir!',
-          'Düşüncelerin bizim için değerli. Çok yakında fikirlerini doğrudan araçlara dönüştürebileceksin.',
-          [{ text: 'TAMAM', style: 'default' }]
-        );
+      case 'transform_idea':
+        if (!idea.trim()) {
+          Alert.alert('Hata', 'Lütfen önce bir fikir yazın!');
+          return;
+        }
+        setIsProcessing(true);
+        // Simüle edilmiş AI işlemi
+        setTimeout(() => {
+          Alert.alert(
+            'Fikir Dönüştürüldü! 🚀',
+            `"${idea}" fikrin bir prototip araca dönüştürüldü. Fikir defterine kaydedildi.`,
+            [{ text: 'HARİKA', onPress: () => {
+              setIdea('');
+              setIsProcessing(false);
+            }}]
+          );
+        }, 1500);
+        break;
+      case 'view_archive':
+        Alert.alert('Arşiv', 'Fikir arşivi şu an boş. Biraz fikir üretmeye ne dersin?');
         break;
       default:
         console.log(`Bilinmeyen aksiyon: ${action}`);
@@ -30,8 +49,6 @@ export default function App() {
   };
 
   const renderIcon = (name, color, size = 24) => {
-    // Lucide names in JSON might be Brain, Lightbulb
-    // lucide-react-native exports them as Brain, Lightbulb
     const IconComponent = LucideIcons[name] || LucideIcons.HelpCircle;
     return <IconComponent color={color} size={size} />;
   };
@@ -67,16 +84,42 @@ export default function App() {
             )}
           </View>
         );
+      case 'text-input':
+        return (
+          <View key={index} style={styles.inputWrapper}>
+            <View style={[styles.inputContainer, { borderColor: theme.secondary + '40' }]}>
+              <TextInput
+                style={[styles.input, { color: theme.text }]}
+                placeholder={component.placeholder}
+                placeholderTextColor={theme.secondary}
+                value={idea}
+                onChangeText={setIdea}
+                multiline
+              />
+            </View>
+            <TouchableOpacity
+              style={[styles.inputButton, { backgroundColor: theme.primary }]}
+              onPress={() => handleAction(component.action)}
+              activeOpacity={0.8}
+              disabled={isProcessing}
+            >
+              <Text style={styles.inputButtonLabel}>
+                {isProcessing ? 'İŞLENİYOR...' : component.buttonLabel}
+              </Text>
+              {renderIcon('Zap', '#ffffff', 18)}
+            </TouchableOpacity>
+          </View>
+        );
       case 'button':
         return (
           <TouchableOpacity
             key={index}
-            style={[styles.button, { backgroundColor: theme.primary }]}
+            style={[styles.button, { backgroundColor: theme.primary + '15', borderColor: theme.primary + '40' }]}
             activeOpacity={0.8}
             onPress={() => handleAction(component.action)}
           >
-            {renderIcon(component.icon, '#ffffff', 20)}
-            <Text style={styles.buttonLabel}>{component.label}</Text>
+            {renderIcon(component.icon, theme.primary, 20)}
+            <Text style={[styles.buttonLabel, { color: theme.primary }]}>{component.label}</Text>
           </TouchableOpacity>
         );
       default:
@@ -87,11 +130,16 @@ export default function App() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar barStyle="light-content" />
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.main}>
-          {screen.components.map((comp, idx) => renderComponent(comp, idx))}
-        </View>
-      </ScrollView>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <View style={styles.main}>
+            {screen.components.map((comp, idx) => renderComponent(comp, idx))}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -172,8 +220,42 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   buttonLabel: {
-    color: '#ffffff',
     fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: 1,
+  },
+  inputWrapper: {
+    gap: 16,
+  },
+  inputContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    borderRadius: 24,
+    padding: 20,
+    borderWidth: 1,
+    minHeight: 120,
+  },
+  input: {
+    fontSize: 18,
+    fontWeight: '500',
+    lineHeight: 26,
+    textAlignVertical: 'top',
+  },
+  inputButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 18,
+    borderRadius: 20,
+    gap: 12,
+    shadowColor: '#3b82f6',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  inputButtonLabel: {
+    color: '#ffffff',
+    fontSize: 16,
     fontWeight: '800',
     letterSpacing: 1,
   },

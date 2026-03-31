@@ -18,9 +18,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Total Iterations | 4 |
-| Total Weight (kg) | 40 |
-| Total Time (min) | 30 |
+| Total Iterations | 5 |
+| Total Weight (kg) | 55 |
+| Total Time (min) | 45 |
 | Failed Attempts | 0 |
 
 ---
@@ -133,5 +133,33 @@ App icon / branding (Finish Warm-Up phase).
 **Screenshot:** `[Branding Ready]`
 
 **Commit:** `[NAIM: Fikir Atölyesi] App icon and branding - 10kg`
+
+---
+
+### 🏋️ Iteration 5 (Working Set Start)
+
+| Field | Value |
+|-------|-------|
+| Feature | Text Input → Output |
+| Weight | 15 kg |
+| Tool Used | Antigravity |
+| Time | 15 min |
+| Attempts | 1 |
+| Status | ✅ Success |
+
+**Prompt given to AI:**
+```
+Text input -> output (Working Set phase).
+```
+
+**What happened:**
+- Implemented a premium `TextInput` for idea capturing.
+- Added state management and a "Transform" dispatcher in `App.js`.
+- Implemented a simulated AI processing feedback loop with native Alerts.
+- Successfully transitioned from Warm-Up to the Working Set phase.
+
+**Screenshot:** `[Input Layer Active]`
+
+**Commit:** `[NAIM: Fikir Atölyesi] Text input -> output implementation - Total 55kg`
 
 ---

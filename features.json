@@ -21,10 +21,16 @@
         "footer": "NAIM Protocol ACTIVE"
       },
       {
+        "type": "text-input",
+        "placeholder": "Bir fikir veya araç hayal et...",
+        "buttonLabel": "DÖNÜŞTÜR",
+        "action": "transform_idea"
+      },
+      {
         "type": "button",
-        "label": "FİKİR BIRAK",
-        "action": "log_idea",
-        "icon": "Lightbulb"
+        "label": "FİKİR ARŞİVİ",
+        "action": "view_archive",
+        "icon": "Folder"
       }
     ]
   }
